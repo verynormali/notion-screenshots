@@ -2,23 +2,20 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Echo Hello (test)",
-      "type": "shell",
-      "command": "echo VSCode-task-loaded"
-    },
-    {
       "label": "Copy Raw GitHub URL",
       "type": "shell",
       "command": "bash",
       "args": [
-        "${workspaceFolder}/copy raw automation/copy_raw_url.sh",
-        "${file}"
+        "-c",
+        "\"${workspaceFolder}/copy raw automation/copy_raw_url.sh\" \"${file}\" && echo '✅ Raw URL copied to clipboard'"
       ],
-      "options": { "cwd": "${workspaceFolder}" },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "presentation": {
-        "reveal": "always",
+        "reveal": "silent",
         "panel": "dedicated",
-        "clear": true
+        "clear": false
       },
       "problemMatcher": []
     },
@@ -27,15 +24,16 @@
       "type": "shell",
       "command": "bash",
       "args": [
-        "${workspaceFolder}/copy raw automation/copy_raw_url.sh",
-        "--markdown",
-        "${file}"
+        "-c",
+        "\"${workspaceFolder}/copy raw automation/copy_raw_url.sh\" --markdown \"${file}\" && echo '✅ Raw Markdown URL copied to clipboard'"
       ],
-      "options": { "cwd": "${workspaceFolder}" },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "presentation": {
-        "reveal": "always",
+        "reveal": "silent",
         "panel": "dedicated",
-        "clear": true
+        "clear": false
       },
       "problemMatcher": []
     }
