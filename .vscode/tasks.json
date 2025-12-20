@@ -3,11 +3,10 @@
   "tasks": [
     {
       "label": "Copy Raw GitHub URL",
-      "type": "shell",
-      "command": "bash",
+      "type": "process",
+      "command": "${workspaceFolder}/copy raw automation/copy_raw_url.sh",
       "args": [
-        "-c",
-        "\"${workspaceFolder}/copy raw automation/copy_raw_url.sh\" \"${file}\" && echo '✅ Raw URL copied to clipboard'"
+        "${file}"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -21,11 +20,11 @@
     },
     {
       "label": "Copy Raw GitHub URL (Markdown)",
-      "type": "shell",
-      "command": "bash",
+      "type": "process",
+      "command": "${workspaceFolder}/copy raw automation/copy_raw_url.sh",
       "args": [
-        "-c",
-        "\"${workspaceFolder}/copy raw automation/copy_raw_url.sh\" --markdown \"${file}\" && echo '✅ Raw Markdown URL copied to clipboard'"
+        "--markdown",
+        "${file}"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
