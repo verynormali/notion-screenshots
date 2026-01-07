@@ -16,18 +16,27 @@ if [[ -z "${FILE_PATH}" ]]; then
   exit 1
 fi
 
-if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  echo "Not inside a Git repository."
+# Resolve FILE_PATH to an absolute path so we can locate the repo reliably
+FILE_PATH_ABS="$(python3 -c 'import os,sys; print(os.path.abspath(sys.argv[1]))' "$FILE_PATH")"
+
+# Detect repo root from the file's directory (not from the current VS Code cwd)
+if ! REPO_ROOT="$(git -C "$(dirname "$FILE_PATH_ABS")" rev-parse --show-toplevel 2>/dev/null)"; then
+  echo "Not inside a Git repository: ${FILE_PATH_ABS}"
   exit 1
 fi
 
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-BRANCH="$(git rev-parse --abbrev-ref HEAD || echo main)"
-if [[ "${BRANCH}" == "HEAD" ]]; then BRANCH="main"; fi
-# Make vars available to Python helpers
-export REPO_ROOT FILE_PATH
+# Determine current branch; if detached, fall back to origin/HEAD, then main
+BRANCH="$(git -C "$REPO_ROOT" symbolic-ref --quiet --short HEAD 2>/dev/null || true)"
+if [[ -z "$BRANCH" ]]; then
+  BRANCH="$(git -C "$REPO_ROOT" symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's#^origin/##' || true)"
+fi
+if [[ -z "$BRANCH" ]]; then BRANCH="main"; fi
 
-REMOTE_URL="$(git config --get remote.origin.url || true)"
+# Make vars available to Python helpers
+export REPO_ROOT
+export FILE_PATH="$FILE_PATH_ABS"
+
+REMOTE_URL="$(git -C "$REPO_ROOT" config --get remote.origin.url || true)"
 if [[ -z "${REMOTE_URL}" ]]; then
   echo "No 'origin' remote configured."
   exit 1
